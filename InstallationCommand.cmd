@@ -1,0 +1,1 @@
+msiexec /i WiXWebInstaller\bin\Release\WiXWebInstaller.msi INSTALLPATH="C:\damienbod1"

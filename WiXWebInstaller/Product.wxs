@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="damienbod xml util example" Language="1031" Version="1.0.2.6" Manufacturer="damienbod" UpgradeCode="7f152956-f604-4453-affa-9ea242d3fbe4">
+    <Package Id="*" InstallerVersion="305" InstallScope="perMachine" Compressed="yes" />
+
+    <Media Id="1" Cabinet="WiXWebInstaller.cab" EmbedCab="yes" />
+    
+    <!-- Default configuration values -->
+    <Property Id="INSTALLPATH">C:\damienbod</Property>
+    <Property Id="DEFAULT_CONNECTION_STRING">a test connection string...</Property>
+    <Property Id="CONFIGVALUE_CUSTOMERRORS">Off</Property>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='INSTALLPATH' Name='SimpleWebApp' />
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id='INSTALLPATH'>
+      <Directory Id='INSTALLDIR_SimpleWebApp' Name='SimpleWebAppDeployment' />
+    </DirectoryRef>
+
+    
+    <Component Id='WebAppSettings' Guid='7f152956-f604-4453-affa-9ea242d3fbe5' Feature='ProductFeature' Directory='INSTALLDIR_SimpleWebApp' >
+      
+          <util:XmlFile Id='DefaultConnectionString' 
+                    Action='setValue' 
+                    ElementPath='/configuration/connectionStrings/add[\[]@name="DefaultConnection"[\]]/@connectionString' 
+                    File='[INSTALLDIR_SimpleWebApp]web.config' Value='[DEFAULT_CONNECTION_STRING]' />
+
+          <util:XmlFile Id='CustomErrors'
+                    Action='setValue'
+                    ElementPath='/configuration/system.web/customErrors/@mode'
+                    File='[INSTALLDIR_SimpleWebApp]web.config'
+                    Value='[CONFIGVALUE_CUSTOMERRORS]' />
+
+          <CreateFolder />
+       </Component>
+
+    <Feature Id="ProductFeature" Title="UtilInstaller" Level="1">
+      <ComponentGroupRef Id="SimpleWebAppGroup" />
+      <ComponentRef Id="WebAppSettings" />
+    </Feature>
+    
+    <MajorUpgrade Schedule="afterInstallInitialize"  AllowDowngrades="no" DowngradeErrorMessage="ok" AllowSameVersionUpgrades="yes" />
+
+  </Product>
+</Wix>
+
